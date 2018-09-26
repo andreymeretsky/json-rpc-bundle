@@ -7,3 +7,8 @@ ufo_api_soapui_xml:
     path:     /api/soapui.xml
     defaults: { _controller: UfoJsonRpcBundle:Api:soapUi }
     methods: ["GET"]
+
+ufo_api_postman_collection:
+    path:     /api/postman.json
+    defaults: { _controller: UfoJsonRpcBundle:Api:postman }
+    methods: ["GET"]

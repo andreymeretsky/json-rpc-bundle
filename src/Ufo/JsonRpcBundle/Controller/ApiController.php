@@ -42,5 +42,17 @@ class ApiController extends Controller
         return new Response($soupUiProjectGenerator->createXml(), 200, ['Content-Type' => 'text/xml']);
     }
 
+    public function postmanAction()
+    {
+        $smd = $this->get('ufo_api_server.zend_json_rpc_server_facade')->getServer()->getServiceMap();
+
+        $postmanCollectionGenerator = $this->get('ufo_api_server.postman.collection_generator');
+//
+        foreach ($smd->getServices() as $key => $service) {
+            $postmanCollectionGenerator->addService($service);
+        }
+        return new Response($postmanCollectionGenerator->createJson(), 200, ['Content-Type' => 'application/json']);
+    }
+
 
 }
