@@ -67,19 +67,29 @@ class CollectionGenerator {
         ];
 
         $params = [];
+        $arrayParamsToFix = [];
+
         foreach ($procedure->getParams() as $param) {
             if (!key_exists('name', $param)) {
                 continue;
             }
             $params[$param['name']] = "{{{$param['name']}}}";
+            if($param['type'] == 'array') {
+                $arrayParamsToFix[] = $params[$param['name']];
+            }
         }
-//        var_dump(__FILE__ . ':' . __LINE__, $params);
         $raw = [
             "id"     => "test_id",
             "method" => $procedure->getName(),
             "params" => $params,
         ];
 
+        $fixedRawBody = json_encode($raw);
+        if ($arrayParamsToFix) {
+            $fixedRawBody = str_replace(array_map(function ($elem) {
+                return sprintf('"%s"', $elem);
+            }, $arrayParamsToFix), $arrayParamsToFix, $fixedRawBody);
+        }
 
         $this->items[] = [
             'name'     => $procedure->getName(),
@@ -88,7 +98,7 @@ class CollectionGenerator {
                 'header' => $headers,
                 'body'   => [
                     "mode" => "raw",
-                    "raw"  => json_encode($raw),
+                    "raw"  => $fixedRawBody,
                 ],
                 'url'    => [
                     "raw"      => "http://rt.loc:8082/api",
